@@ -3944,3 +3944,43 @@ select:focus {
     font-size: 9px;
   }
 }
+
+/* STEP15-2：プレイヤー登録状態の明確化 */
+#player-add-screen .frequent-player-button.is-added,
+#player-add-screen .frequent-player-button:disabled.is-added {
+  color: var(--color-primary-dark);
+  background: #e8f4eb;
+  border-color: #78b287;
+  opacity: 1;
+}
+
+#player-add-screen .frequent-player-button.is-added::first-letter {
+  font-weight: 800;
+}
+
+/* STEP15-3 プレイヤー登録を1ボタン化し、入力欄を最大10人まで追加 */
+#player-add-screen .player-field-add-button {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 10px;
+  border: 1px dashed var(--color-border, #b8c8bf);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--color-primary, #176b3a);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#player-add-screen .player-field-add-button:active {
+  transform: translateY(1px);
+}
+
+#player-add-screen .player-field-add-button[hidden] {
+  display: none;
+}
+
+#player-add-screen #player-field-limit-note {
+  margin: 10px 0 0;
+  text-align: center;
+}

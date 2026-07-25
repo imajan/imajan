@@ -204,27 +204,32 @@ const registeredPlayerSection = document.getElementById(
 const registeredPlayerList = document.getElementById(
   "registered-player-list",
 );
+const registeredPlayerHeading = document.getElementById(
+  "registered-player-heading",
+);
 const frequentPlayerSection = document.getElementById(
   "frequent-player-section",
 );
 const frequentPlayerList = document.getElementById(
   "frequent-player-list",
 );
-const playerNameInputs = Array.from(
-  document.querySelectorAll(".player-name-input"),
+const playerNameList = document.getElementById("player-name-list");
+const playerFieldAddButton = document.getElementById(
+  "player-field-add-button",
 );
-const playerNameErrors = Array.from(
-  document.querySelectorAll(".player-name-error"),
+const playerFieldLimitNote = document.getElementById(
+  "player-field-limit-note",
 );
+let playerNameInputs = [];
+let playerNameErrors = [];
 const playerAddMessage = document.getElementById(
   "player-add-message",
 );
 const playerSaveButton = document.getElementById(
   "player-save-button",
 );
-const playerFinishButton = document.getElementById(
-  "player-finish-button",
-);
+const MAX_PLAYER_INPUT_FIELDS = 10;
+const INITIAL_PLAYER_INPUT_FIELDS = 4;
 
 const FREQUENT_PLAYER_BATCH_DELAY_MS = 700;
 let frequentPlayerBatchTimer = null;
@@ -4270,23 +4275,19 @@ function getFrequentPlayerCandidates(limit = 12) {
   }
 
   const currentEventNames = new Set(
-    getLocalPlayers()
-      .filter(
-        (player) =>
-          player.eventId === currentEvent.eventId,
-      )
-      .map((player) => normalizePlayerName(player.name)),
+    getEventPlayers().map((player) =>
+      normalizePlayerName(player.name),
+    ),
   );
-
   const candidateMap = new Map();
 
   getLocalPlayers().forEach((player) => {
-    const normalizedName = normalizePlayerName(player.name);
+    if (player.eventId === currentEvent.eventId) {
+      return;
+    }
 
-    if (
-      !normalizedName ||
-      currentEventNames.has(normalizedName)
-    ) {
+    const normalizedName = normalizePlayerName(player.name);
+    if (!normalizedName) {
       return;
     }
 
@@ -4327,7 +4328,13 @@ function getFrequentPlayerCandidates(limit = 12) {
         new Date(a.lastUsedAt || 0).getTime()
       );
     })
-    .slice(0, limit);
+    .slice(0, limit)
+    .map((candidate) => ({
+      ...candidate,
+      isRegistered: currentEventNames.has(
+        candidate.normalizedName,
+      ),
+    }));
 }
 
 async function createLocalPlayer(name) {
@@ -4339,6 +4346,10 @@ function renderRegisteredPlayers() {
 
   registeredPlayerList.replaceChildren();
   registeredPlayerSection.hidden = players.length === 0;
+  if (registeredPlayerHeading) {
+    registeredPlayerHeading.textContent =
+      `参加プレイヤー（${players.length}人）`;
+  }
 
   players.forEach((player) => {
     const chip = document.createElement("span");
@@ -4363,15 +4374,26 @@ function renderFrequentPlayerCandidates() {
 
     button.type = "button";
     button.className = "frequent-player-button";
-    button.textContent = candidate.name;
+    button.textContent = candidate.isRegistered
+      ? `✓ ${candidate.name}`
+      : candidate.name;
+    button.disabled = candidate.isRegistered;
+    button.classList.toggle(
+      "is-added",
+      candidate.isRegistered,
+    );
     button.setAttribute(
       "aria-label",
-      `${candidate.name}をイベントへ追加`,
+      candidate.isRegistered
+        ? `${candidate.name}は追加済みです`
+        : `${candidate.name}をイベントへ追加`,
     );
 
-    button.addEventListener("click", () => {
-      handleFrequentPlayerAdd(candidate.name, button);
-    });
+    if (!candidate.isRegistered) {
+      button.addEventListener("click", () => {
+        handleFrequentPlayerAdd(candidate.name, button);
+      });
+    }
 
     frequentPlayerList.appendChild(button);
   });
@@ -4491,6 +4513,84 @@ function handleFrequentPlayerAdd(name, button) {
   scheduleFrequentPlayerBatchSave();
 }
 
+function bindPlayerNameInput(input, errorElement) {
+  input.addEventListener("input", () => {
+    errorElement.textContent = "";
+    input.classList.remove("input-error");
+    playerAddMessage.textContent = "";
+    playerAddMessage.className = "form-message";
+  });
+}
+
+function refreshPlayerNameFieldReferences() {
+  playerNameInputs = Array.from(
+    playerNameList.querySelectorAll(".player-name-input"),
+  );
+  playerNameErrors = Array.from(
+    playerNameList.querySelectorAll(".player-name-error"),
+  );
+
+  playerNameInputs.forEach((input, index) => {
+    if (input.dataset.listenerBound === "true") {
+      return;
+    }
+
+    bindPlayerNameInput(input, playerNameErrors[index]);
+    input.dataset.listenerBound = "true";
+  });
+
+  const reachedLimit =
+    playerNameInputs.length >= MAX_PLAYER_INPUT_FIELDS;
+  playerFieldAddButton.hidden = reachedLimit;
+  playerFieldLimitNote.hidden = !reachedLimit;
+}
+
+function createPlayerNameField(index) {
+  const field = document.createElement("div");
+  field.className = "form-group player-name-field";
+
+  const label = document.createElement("label");
+  label.htmlFor = `player-name-${index}`;
+  label.textContent = `プレイヤー${index}`;
+
+  const input = document.createElement("input");
+  input.id = `player-name-${index}`;
+  input.className = "player-name-input";
+  input.name = `playerName${index}`;
+  input.type = "text";
+  input.placeholder = "例：プレイヤー名";
+  input.maxLength = 20;
+  input.autocomplete = "off";
+
+  const error = document.createElement("p");
+  error.className = "field-error player-name-error";
+
+  field.append(label, input, error);
+  return field;
+}
+
+function addPlayerNameField() {
+  refreshPlayerNameFieldReferences();
+  if (playerNameInputs.length >= MAX_PLAYER_INPUT_FIELDS) {
+    return;
+  }
+
+  const nextIndex = playerNameInputs.length + 1;
+  playerNameList.appendChild(createPlayerNameField(nextIndex));
+  refreshPlayerNameFieldReferences();
+  playerNameInputs[playerNameInputs.length - 1]?.focus();
+}
+
+function resetPlayerNameFields() {
+  refreshPlayerNameFieldReferences();
+  while (playerNameInputs.length > INITIAL_PLAYER_INPUT_FIELDS) {
+    playerNameInputs[playerNameInputs.length - 1]
+      .closest(".player-name-field")
+      ?.remove();
+    refreshPlayerNameFieldReferences();
+  }
+}
+
 function showPlayerAddScreen({ preserveValues = false } = {}) {
   if (!currentEvent) {
     showEventListScreen();
@@ -4502,7 +4602,9 @@ function showPlayerAddScreen({ preserveValues = false } = {}) {
 
   if (!preserveValues) {
     playerAddForm.reset();
+    resetPlayerNameFields();
   }
+  refreshPlayerNameFieldReferences();
   clearPlayerFormErrors();
 
   renderRegisteredPlayers();
@@ -4538,10 +4640,7 @@ function validatePlayerForm() {
 
   const enteredNames = getEnteredPlayerNames();
   if (enteredNames.length === 0) {
-    playerNameErrors[0].textContent =
-      "プレイヤー名を1人以上入力してください。";
-    playerNameInputs[0].classList.add("input-error");
-    return false;
+    return true;
   }
 
   let isValid = true;
@@ -4625,44 +4724,58 @@ async function handlePlayerAddSubmit(event) {
   }
 
   const names = getEnteredPlayerNames();
-  const startSortOrder = getEventPlayers().length + 1;
-  const optimisticPlayers = createOptimisticPlayers(names);
-  const optimisticIds = new Set(
-    optimisticPlayers.map((player) => player.playerId),
-  );
-
-  cloudPlayers.push(...optimisticPlayers);
   playerSaveButton.disabled = true;
   playerSaveButton.textContent = "保存中...";
-  showEventDetailOptimistically();
+  playerAddMessage.textContent = "";
+  playerAddMessage.className = "form-message";
 
   try {
-    const savedPlayers = await createPlayersOnSheet(names, {
-      startSortOrder,
-    });
-    cloudPlayers = cloudPlayers.filter(
-      (player) => !optimisticIds.has(player.playerId),
-    );
-    cloudPlayers.push(...savedPlayers);
-    renderEventDetail();
+    await flushFrequentPlayerBatch();
+
+    if (names.length > 0) {
+      const startSortOrder = getEventPlayers().length + 1;
+      const optimisticPlayers = createOptimisticPlayers(names);
+      const optimisticIds = new Set(
+        optimisticPlayers.map((player) => player.playerId),
+      );
+
+      cloudPlayers.push(...optimisticPlayers);
+      refreshPlayerRegistrationUi();
+
+      try {
+        const savedPlayers = await createPlayersOnSheet(names, {
+          startSortOrder,
+        });
+        cloudPlayers = cloudPlayers.filter(
+          (player) => !optimisticIds.has(player.playerId),
+        );
+        cloudPlayers.push(...savedPlayers);
+      } catch (error) {
+        cloudPlayers = cloudPlayers.filter(
+          (player) => !optimisticIds.has(player.playerId),
+        );
+        throw error;
+      }
+    }
+
+    playerAddForm.reset();
+    resetPlayerNameFields();
+    clearPlayerFormErrors();
+    showEventDetailScreen(currentEvent, { scrollToTop: true });
   } catch (error) {
     console.error(error);
-    cloudPlayers = cloudPlayers.filter(
-      (player) => !optimisticIds.has(player.playerId),
-    );
-    renderEventDetail();
-    showPlayerAddScreen({ preserveValues: true });
+    refreshPlayerRegistrationUi();
     playerAddMessage.textContent =
       error instanceof Error
         ? error.message
-        : "プレイヤーの追加中にエラーが発生しました。";
+        : "プレイヤーの保存中にエラーが発生しました。";
     playerAddMessage.className = "form-message is-error";
   } finally {
     playerSaveButton.disabled = false;
-    playerSaveButton.textContent =
-      "入力したプレイヤーをまとめて追加";
+    playerSaveButton.textContent = "登録して保存";
   }
 }
+
 const RULE_PRESETS = {
   yonma: {
     "10-30": {
@@ -5445,25 +5558,13 @@ playerAddForm.addEventListener(
   "submit",
   handlePlayerAddSubmit,
 );
-if (playerFinishButton) {
-  playerFinishButton.addEventListener("click", () => {
-    flushFrequentPlayerBatch();
-    showEventDetailScreen(currentEvent, { scrollToTop: true });
-  });
-}
+playerFieldAddButton.addEventListener("click", addPlayerNameField);
 
 connectionTestButton.addEventListener(
   "click",
   handleConnectionTest,
 );
 
-playerNameInputs.forEach((input, index) => {
-  input.addEventListener("input", () => {
-    playerNameErrors[index].textContent = "";
-    input.classList.remove("input-error");
-    playerAddMessage.textContent = "";
-    playerAddMessage.className = "form-message";
-  });
-});
+refreshPlayerNameFieldReferences();
 
 initializeApp();
