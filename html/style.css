@@ -4460,3 +4460,127 @@ select:focus {
     padding: 13px 14px;
   }
 }
+
+/* STEP16-4：対局詳細画面の情報階層と一覧性を改善 */
+#event-detail-screen .page-content {
+  padding-top: 12px;
+  padding-bottom: 68px;
+}
+
+#event-detail-screen .event-summary-card {
+  padding: 15px 16px;
+  gap: 9px;
+  border-radius: 16px;
+}
+
+#event-detail-screen .event-summary-label {
+  margin-bottom: 2px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+#event-detail-screen .event-summary-card h2 {
+  font-size: 19px;
+  line-height: 1.35;
+}
+
+#event-detail-screen .event-summary-tags {
+  gap: 5px 6px;
+}
+
+#event-detail-screen .summary-tag {
+  padding: 4px 8px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+#event-detail-screen .detail-section {
+  margin-top: 10px;
+  padding: 15px 16px;
+  border-radius: 16px;
+}
+
+#event-detail-screen .detail-section-header {
+  margin-bottom: 10px;
+}
+
+#event-detail-screen .detail-section-header h2 {
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+#event-detail-screen .detail-section-header p,
+#event-detail-screen .detail-section-description {
+  font-size: 11px;
+}
+
+#event-detail-screen .header-action-button {
+  min-height: 36px;
+  padding: 8px 11px;
+  font-size: 12px;
+}
+
+#event-detail-screen .standings-table {
+  gap: 4px;
+}
+
+#event-detail-screen .standings-row {
+  min-height: 40px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+#event-detail-screen .standings-rank {
+  font-size: 12px;
+}
+
+#event-detail-screen .standings-player {
+  font-size: 13px;
+}
+
+#event-detail-screen .standings-score,
+#event-detail-screen .standings-stat {
+  font-size: 12px;
+}
+
+#event-detail-screen .match-history-list,
+#event-detail-screen .adjustment-history-list {
+  gap: 7px;
+}
+
+#event-detail-screen .match-history-card,
+#event-detail-screen .adjustment-history-card {
+  padding: 11px 12px;
+  border-radius: 12px;
+}
+
+#event-detail-screen .match-history-header,
+#event-detail-screen .adjustment-history-header {
+  gap: 8px;
+}
+
+#event-detail-screen .match-history-results,
+#event-detail-screen .adjustment-history-results {
+  margin-top: 8px;
+  gap: 6px;
+}
+
+#event-detail-screen .mini-empty-state {
+  padding: 16px 12px;
+}
+
+@media (max-width: 520px) {
+  #event-detail-screen .event-summary-card,
+  #event-detail-screen .detail-section {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  #event-detail-screen .detail-section-header {
+    gap: 8px;
+  }
+
+  #event-detail-screen .header-action-button {
+    flex-shrink: 0;
+  }
+}
