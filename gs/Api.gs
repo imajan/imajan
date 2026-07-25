@@ -19,6 +19,15 @@ const CACHE_CONFIG_ = Object.freeze({
   MAX_VALUE_BYTES: 95000,
 });
 
+/**
+ * プレイヤー登録数の安全上限です。
+ * 画面側の制限だけに依存せず、GAS側でも必ず検証します。
+ */
+const PLAYER_LIMITS_ = Object.freeze({
+  MAX_PER_REQUEST: 50,
+  MAX_PER_EVENT: 50,
+});
+
 function getAppCache_() {
   return CacheService.getScriptCache();
 }
@@ -964,6 +973,22 @@ function apiCreatePlayer_(payload) {
       }
     }
 
+    const currentEventPlayerCount = players.filter(function (player) {
+      return String(player.eventId) === eventId;
+    }).length;
+
+    if (currentEventPlayerCount >= PLAYER_LIMITS_.MAX_PER_EVENT) {
+      const eventLimitError = new Error(
+        "この対局に登録できるプレイヤーは" +
+          PLAYER_LIMITS_.MAX_PER_EVENT +
+          "人までです。現在" +
+          currentEventPlayerCount +
+          "人登録されています。"
+      );
+      eventLimitError.code = "EVENT_PLAYER_LIMIT_EXCEEDED";
+      throw eventLimitError;
+    }
+
     const name = String(payload.name).trim();
     const duplicatedPlayer = players.find(function (player) {
       return (
@@ -1058,9 +1083,11 @@ function apiCreatePlayers_(payload) {
     namesError.code = "INVALID_PLAYER_NAMES";
     throw namesError;
   }
-  if (names.length > 50) {
+  if (names.length > PLAYER_LIMITS_.MAX_PER_REQUEST) {
     const limitError = new Error(
-      "一度に登録できるプレイヤーは50人までです。"
+      "一度に登録できるプレイヤーは" +
+        PLAYER_LIMITS_.MAX_PER_REQUEST +
+        "人までです。"
     );
     limitError.code = "TOO_MANY_PLAYERS";
     throw limitError;
@@ -1111,6 +1138,21 @@ function apiCreatePlayers_(payload) {
       currentEventPlayerCount += 1;
       existingNameSet[String(player.name).trim().toLowerCase()] = true;
     });
+
+    if (
+      currentEventPlayerCount + names.length >
+      PLAYER_LIMITS_.MAX_PER_EVENT
+    ) {
+      const eventLimitError = new Error(
+        "この対局に登録できるプレイヤーは" +
+          PLAYER_LIMITS_.MAX_PER_EVENT +
+          "人までです。現在" +
+          currentEventPlayerCount +
+          "人登録されています。"
+      );
+      eventLimitError.code = "EVENT_PLAYER_LIMIT_EXCEEDED";
+      throw eventLimitError;
+    }
 
     names.forEach(function (name) {
       if (existingNameSet[name.toLowerCase()]) {
