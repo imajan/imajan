@@ -2795,12 +2795,24 @@ function renderAdjustmentEntryRows(existingEntries = []) {
     row.innerHTML = `
       <span class="adjustment-entry-player"></span>
       <div class="adjustment-point-control">
-        <button
-          class="adjustment-sign-button"
-          type="button"
-          aria-label="${player.name}のプラス・マイナスを切り替え"
-          aria-pressed="false"
-        >＋</button>
+        <div
+          class="match-sign-buttons adjustment-sign-buttons"
+          role="group"
+          aria-label="${player.name}の符号"
+        >
+          <button
+            class="match-sign-button adjustment-sign-button is-active"
+            type="button"
+            data-sign="1"
+            aria-pressed="true"
+          >＋</button>
+          <button
+            class="match-sign-button adjustment-sign-button"
+            type="button"
+            data-sign="-1"
+            aria-pressed="false"
+          >−</button>
+        </div>
         <input
           class="adjustment-point-input"
           type="number"
@@ -2811,6 +2823,7 @@ function renderAdjustmentEntryRows(existingEntries = []) {
           placeholder="0"
           aria-label="${player.name}のポイント増減"
         />
+        <span class="adjustment-point-unit">pt</span>
       </div>
     `;
 
@@ -2820,8 +2833,8 @@ function renderAdjustmentEntryRows(existingEntries = []) {
     const input = row.querySelector(
       ".adjustment-point-input",
     );
-    const signButton = row.querySelector(
-      ".adjustment-sign-button",
+    const signButtons = Array.from(
+      row.querySelectorAll(".adjustment-sign-button"),
     );
     const existingValue = existingMap.has(player.playerId)
       ? Number(existingMap.get(player.playerId))
@@ -2831,22 +2844,25 @@ function renderAdjustmentEntryRows(existingEntries = []) {
       input.value = String(Math.abs(existingValue));
     }
 
-    const setNegative = (isNegative) => {
-      row.dataset.negative = isNegative ? "true" : "false";
-      signButton.textContent = isNegative ? "−" : "＋";
-      signButton.classList.toggle("is-negative", isNegative);
-      signButton.setAttribute(
-        "aria-pressed",
-        isNegative ? "true" : "false",
-      );
+    const setSign = (sign) => {
+      const normalizedSign = sign === -1 ? -1 : 1;
+      row.dataset.negative = normalizedSign === -1 ? "true" : "false";
+
+      signButtons.forEach((button) => {
+        const isActive = Number(button.dataset.sign) === normalizedSign;
+        button.classList.toggle("is-active", isActive);
+        button.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
     };
 
-    setNegative(existingValue !== null && existingValue < 0);
+    setSign(existingValue !== null && existingValue < 0 ? -1 : 1);
 
-    signButton.addEventListener("click", () => {
-      setNegative(row.dataset.negative !== "true");
-      updateAdjustmentTotal();
-      input.focus();
+    signButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        setSign(Number(button.dataset.sign));
+        updateAdjustmentTotal();
+        input.focus();
+      });
     });
     input.addEventListener("input", updateAdjustmentTotal);
 

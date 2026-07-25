@@ -4005,3 +4005,266 @@ select:focus {
 .action-error-summary[hidden] {
   display: none;
 }
+
+/* STEP15-4：ポイント増減の符号入力を半荘登録と統一 */
+#adjustment-create-screen .adjustment-entry-row {
+  grid-template-columns: minmax(0, 1fr) minmax(230px, 286px);
+}
+
+#adjustment-create-screen .adjustment-point-control {
+  display: grid;
+  grid-template-columns: auto minmax(72px, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+#adjustment-create-screen .adjustment-sign-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #cdd9d1;
+  border-radius: 12px;
+  background: #fff;
+}
+
+#adjustment-create-screen .adjustment-sign-button {
+  min-width: 42px;
+  min-height: 46px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 0;
+  background: #fff;
+  color: #53625a;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: none;
+}
+
+#adjustment-create-screen .adjustment-sign-button + .adjustment-sign-button {
+  border-left: 1px solid #cdd9d1;
+}
+
+#adjustment-create-screen .adjustment-sign-button[data-sign="1"].is-active {
+  background: #dcf8e5;
+  color: #205b35;
+  box-shadow: inset 0 0 0 1px #25643b;
+}
+
+#adjustment-create-screen .adjustment-sign-button[data-sign="-1"].is-active {
+  background: #fff1f0;
+  color: #b42318;
+  box-shadow: inset 0 0 0 1px #d92d20;
+}
+
+#adjustment-create-screen .adjustment-sign-button:active {
+  transform: none;
+  filter: brightness(0.97);
+}
+
+#adjustment-create-screen .adjustment-point-input {
+  min-height: 46px;
+  text-align: right;
+}
+
+#adjustment-create-screen .adjustment-point-unit {
+  color: #6f7b74;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+  #adjustment-create-screen .adjustment-entry-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  #adjustment-create-screen .adjustment-point-control {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+}
+
+/* STEP15-4追加修正：ポイント増減入力を半荘登録と同じ密度に調整 */
+#adjustment-create-screen .adjustment-entry-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  min-height: 64px;
+  padding-block: 10px;
+}
+
+#adjustment-create-screen .adjustment-point-control {
+  display: inline-grid;
+  grid-template-columns: 80px 82px auto;
+  gap: 4px;
+  width: max-content;
+  min-width: 0;
+  align-items: center;
+  justify-self: end;
+}
+
+#adjustment-create-screen .adjustment-sign-buttons {
+  width: 80px;
+  min-width: 80px;
+}
+
+#adjustment-create-screen .adjustment-sign-button {
+  min-width: 40px;
+  width: 40px;
+  min-height: 44px;
+  padding: 0;
+}
+
+#adjustment-create-screen .adjustment-point-input {
+  box-sizing: border-box;
+  width: 82px;
+  min-width: 82px;
+  max-width: 82px;
+  min-height: 44px;
+  padding: 0 12px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#adjustment-create-screen .adjustment-point-unit {
+  margin-left: 0;
+  color: #53625a;
+  font-size: 13px;
+  line-height: 1;
+}
+
+/* number入力のブラウザ標準スピナーを非表示 */
+#adjustment-create-screen .adjustment-point-input::-webkit-outer-spin-button,
+#adjustment-create-screen .adjustment-point-input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+#adjustment-create-screen .adjustment-point-input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+@media (max-width: 520px) {
+  #adjustment-create-screen .adjustment-entry-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  #adjustment-create-screen .adjustment-point-control {
+    grid-template-columns: 76px 72px auto;
+    gap: 3px;
+  }
+
+  #adjustment-create-screen .adjustment-sign-buttons {
+    width: 76px;
+    min-width: 76px;
+  }
+
+  #adjustment-create-screen .adjustment-sign-button {
+    width: 38px;
+    min-width: 38px;
+  }
+
+  #adjustment-create-screen .adjustment-point-input {
+    width: 72px;
+    min-width: 72px;
+    max-width: 72px;
+    padding-inline: 9px;
+  }
+}
+
+/* STEP15-4追加修正：ポイント増減の符号UIを半荘登録と完全統一 */
+#adjustment-create-screen .adjustment-point-control {
+  grid-template-columns: 62px 82px auto;
+  gap: 5px;
+}
+
+#adjustment-create-screen .adjustment-sign-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  width: 62px;
+  min-width: 62px;
+  height: 34px;
+  min-height: 34px;
+  overflow: hidden;
+  border: 1px solid #cbd7cf;
+  border-radius: 9px;
+  background: #f5f8f6;
+  box-shadow: none;
+}
+
+#adjustment-create-screen .adjustment-sign-button {
+  width: 31px;
+  min-width: 31px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #66736b;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+#adjustment-create-screen .adjustment-sign-button + .adjustment-sign-button {
+  border-left: 1px solid #cbd7cf;
+}
+
+#adjustment-create-screen .adjustment-sign-button[data-sign="1"],
+#adjustment-create-screen .adjustment-sign-button[data-sign="-1"] {
+  border-color: transparent;
+  color: #66736b;
+}
+
+#adjustment-create-screen .adjustment-sign-button[data-sign="1"].is-active {
+  background: #2f7043;
+  color: #fff;
+  box-shadow: none;
+}
+
+#adjustment-create-screen .adjustment-sign-button[data-sign="-1"].is-active {
+  background: #a94d4d;
+  color: #fff;
+  box-shadow: none;
+}
+
+#adjustment-create-screen .adjustment-sign-button:active {
+  transform: none;
+  filter: brightness(0.94);
+}
+
+#adjustment-create-screen .adjustment-sign-button:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid rgba(54, 118, 76, 0.28);
+  outline-offset: -2px;
+}
+
+#adjustment-create-screen .adjustment-point-input {
+  min-height: 34px;
+  height: 34px;
+}
+
+@media (max-width: 520px) {
+  #adjustment-create-screen .adjustment-point-control {
+    grid-template-columns: 62px 72px auto;
+    gap: 5px;
+  }
+
+  #adjustment-create-screen .adjustment-sign-buttons {
+    width: 62px;
+    min-width: 62px;
+  }
+
+  #adjustment-create-screen .adjustment-sign-button {
+    width: 31px;
+    min-width: 31px;
+  }
+}
