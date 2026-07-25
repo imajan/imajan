@@ -3055,6 +3055,61 @@ select:focus {
   text-align: center;
 }
 
+/* STEP15-0：順位点手動入力の符号ボタンを操作可能な状態として明示 */
+.uma-rank-input {
+  min-width: 0;
+
+  display: grid;
+  gap: 5px;
+}
+
+.uma-sign-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.uma-sign-button {
+  min-width: 0;
+  min-height: 36px;
+  padding: 4px 6px;
+
+  color: var(--color-text-secondary);
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+  touch-action: manipulation;
+}
+
+.uma-sign-button + .uma-sign-button {
+  border-left: 1px solid var(--color-border);
+}
+
+.uma-sign-button[data-sign="1"].is-active {
+  color: var(--color-primary-dark);
+  background: var(--color-primary-light);
+}
+
+.uma-sign-button[data-sign="-1"].is-active {
+  color: #9f2d2d;
+  background: #fde8e8;
+}
+
+.uma-sign-button:active {
+  filter: brightness(0.96);
+}
+
+.uma-sign-button:focus-visible {
+  position: relative;
+  z-index: 1;
+}
+
 .rule-input-error {
   margin-top: -6px;
   margin-bottom: 12px;
