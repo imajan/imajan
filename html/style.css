@@ -4584,3 +4584,113 @@ select:focus {
     flex-shrink: 0;
   }
 }
+
+/* STEP16-5：プレイヤー登録画面の情報密度と操作階層を改善 */
+#player-add-screen .page-content {
+  padding-top: 12px;
+  padding-bottom: 68px;
+}
+
+#player-add-screen .form-section {
+  padding: 15px 16px;
+  border-radius: 16px;
+}
+
+#player-add-screen .event-form {
+  gap: 12px;
+}
+
+#player-add-screen .section-heading {
+  margin-bottom: 11px;
+}
+
+#player-add-screen .section-heading h2 {
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+#player-add-screen .section-heading p {
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+#player-add-screen .registered-player-list,
+#player-add-screen .frequent-player-list {
+  gap: 6px;
+}
+
+#player-add-screen .registered-player-chip,
+#player-add-screen .frequent-player-button {
+  min-height: 36px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+#player-add-screen .player-name-list {
+  gap: 8px;
+}
+
+#player-add-screen .player-name-field {
+  margin: 0;
+}
+
+#player-add-screen .form-group label {
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
+#player-add-screen .player-name-input {
+  min-height: 46px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+#player-add-screen .player-name-error:not(:empty) {
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+#player-add-screen .player-field-add-button {
+  min-height: 42px;
+  margin-top: 8px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+#player-add-screen #player-field-limit-note {
+  margin-top: 7px;
+  font-size: 11px;
+}
+
+#player-add-screen .action-error-summary {
+  margin-bottom: 9px;
+  padding: 9px 11px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+#player-add-screen .primary-button,
+#player-add-screen .secondary-button {
+  min-height: 48px;
+}
+
+#player-add-screen .player-finish-button {
+  margin-top: 2px;
+}
+
+@media (max-width: 420px) {
+  #player-add-screen .page-content {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  #player-add-screen .form-section {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+}
