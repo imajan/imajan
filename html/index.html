@@ -122,14 +122,10 @@
         </header>
 
         <div class="home-content">
-          <section class="welcome-card">
-            <p class="welcome-label">ログイン中</p>
-            <h1>
-              こんにちは、<br />
-              <span id="welcome-nickname"></span>さん
-            </h1>
-            <p>対局を選ぶか、新しい対局を作成してください。</p>
-          </section>
+          <p class="home-guide">
+            作成済みの対局を選ぶか、新しい対局を作成してください。
+          </p>
+          <span id="welcome-nickname" hidden></span>
 
           <section class="home-menu" aria-label="メインメニュー">
             <button id="event-list-button" class="menu-card" type="button">
@@ -760,7 +756,7 @@
               hidden
             >
               <div class="section-heading">
-                <h2 id="registered-player-heading">参加プレイヤー（0人）</h2>
+                <h2>登録済みプレイヤー</h2>
                 <p>現在この対局に参加しているプレイヤーです。</p>
               </div>
 
@@ -778,7 +774,7 @@
               <div class="section-heading">
                 <h2>よく使うプレイヤー</h2>
                 <p>
-                  名前をタップすると、その場で参加プレイヤーに追加されます。
+                  名前をタップするとすぐ表示され、連続タップした分はまとめて保存されます。
                 </p>
               </div>
 
@@ -816,17 +812,6 @@
                   <p class="field-error player-name-error"></p>
                 </div>
               </div>
-
-              <button
-                id="player-field-add-button"
-                class="player-field-add-button"
-                type="button"
-              >
-                ＋ プレイヤー入力欄を追加
-              </button>
-              <p id="player-field-limit-note" class="field-note" hidden>
-                一度に入力できるのは50人までです。
-              </p>
             </section>
 
             <p
@@ -841,7 +826,14 @@
               class="primary-button"
               type="submit"
             >
-              登録して保存
+              入力したプレイヤーをまとめて追加
+            </button>
+            <button
+              id="player-finish-button"
+              class="secondary-button player-finish-button"
+              type="button"
+            >
+              参加プレイヤーの追加を完了
             </button>
           </form>
         </div>
