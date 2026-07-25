@@ -2392,6 +2392,26 @@ function renderEventDetailContent_() {
 
   matchCountText.textContent = `${matches.length}半荘`;
 
+  const requiredPlayerCount =
+    currentEvent.gameType === "sanma" ? 3 : 4;
+  const registeredPlayerCount = allPlayers.length;
+  const isPlayerRegistrationComplete =
+    registeredPlayerCount >= requiredPlayerCount;
+
+  openMatchCreateButton.textContent = isPlayerRegistrationComplete
+    ? "半荘を登録"
+    : `あと${requiredPlayerCount - registeredPlayerCount}人登録`;
+  openMatchCreateButton.classList.toggle(
+    "is-player-registration-required",
+    !isPlayerRegistrationComplete,
+  );
+  openMatchCreateButton.setAttribute(
+    "aria-label",
+    isPlayerRegistrationComplete
+      ? "半荘を登録"
+      : `半荘を登録するため、あと${requiredPlayerCount - registeredPlayerCount}人のプレイヤーを登録`,
+  );
+
   const adjustments = getLocalAdjustments()
     .filter(
       (adjustment) =>
@@ -5011,8 +5031,10 @@ async function handleEventCreateSubmit(event) {
       status: "active",
     });
 
-    cloudEvents.push(normalizeCloudEvent(createdEvent));
+    const normalizedEvent = normalizeCloudEvent(createdEvent);
+    cloudEvents.push(normalizedEvent);
     loadedEventOwnerUserId = currentUser.userId;
+    currentEvent = normalizedEvent;
 
     currentEventStatus = "active";
     switchEventStatus("active");
@@ -5020,7 +5042,11 @@ async function handleEventCreateSubmit(event) {
     updateUmaPresetOptions();
     copyPresetToManualFields();
     updateRuleModeDisplay();
-    showEventListScreen();
+
+    // STEP15-1: 対局作成後は、そのままプレイヤー登録へ進みます。
+    // 過去の登録情報を読み込み、「よく使うプレイヤー」もすぐ表示します。
+    await loadPlayersFromSheet();
+    showPlayerAddScreen();
   } catch (error) {
     console.error(error);
 
@@ -5330,10 +5356,26 @@ openPlayerAddButton.addEventListener(
   showPlayerAddScreen,
 );
 
-openMatchCreateButton.addEventListener(
-  "click",
-  showMatchCreateScreen,
-);
+openMatchCreateButton.addEventListener("click", () => {
+  if (!currentEvent) {
+    showEventListScreen();
+    return;
+  }
+
+  const requiredPlayerCount =
+    currentEvent.gameType === "sanma" ? 3 : 4;
+  const registeredPlayerCount = getEventPlayers().length;
+
+  if (registeredPlayerCount < requiredPlayerCount) {
+    showPlayerAddScreen();
+    playerAddMessage.textContent =
+      `半荘を登録するには、あと${requiredPlayerCount - registeredPlayerCount}人追加してください。`;
+    playerAddMessage.className = "form-message";
+    return;
+  }
+
+  showMatchCreateScreen();
+});
 
 openAdjustmentCreateButton.addEventListener(
   "click",
