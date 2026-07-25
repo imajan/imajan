@@ -1058,9 +1058,9 @@ function apiCreatePlayers_(payload) {
     namesError.code = "INVALID_PLAYER_NAMES";
     throw namesError;
   }
-  if (names.length > 20) {
+  if (names.length > 50) {
     const limitError = new Error(
-      "一度に登録できるプレイヤーは20人までです。"
+      "一度に登録できるプレイヤーは50人までです。"
     );
     limitError.code = "TOO_MANY_PLAYERS";
     throw limitError;

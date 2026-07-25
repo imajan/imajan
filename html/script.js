@@ -228,7 +228,7 @@ const playerAddMessage = document.getElementById(
 const playerSaveButton = document.getElementById(
   "player-save-button",
 );
-const MAX_PLAYER_INPUT_FIELDS = 10;
+const MAX_PLAYER_INPUT_FIELDS = 50;
 const INITIAL_PLAYER_INPUT_FIELDS = 4;
 
 const FREQUENT_PLAYER_BATCH_DELAY_MS = 700;
@@ -4776,6 +4776,98 @@ async function handlePlayerAddSubmit(event) {
   }
 }
 
+/**
+ * 入力欄の近くに表示されたエラーを、保存・完了ボタンの直前にも要約表示します。
+ * 長いフォームでも、ボタンを押して進めない理由をその場で確認できます。
+ */
+function setupActionErrorSummaries() {
+  const forms = Array.from(document.querySelectorAll("form"));
+
+  const getSummary = (form) => {
+    let summary = form.querySelector(".action-error-summary");
+    if (summary) {
+      return summary;
+    }
+
+    const submitButton = form.querySelector(
+      'button[type="submit"], input[type="submit"]',
+    );
+    if (!submitButton) {
+      return null;
+    }
+
+    summary = document.createElement("div");
+    summary.className = "action-error-summary";
+    summary.setAttribute("role", "alert");
+    summary.setAttribute("aria-live", "assertive");
+    summary.hidden = true;
+
+    const actionArea = submitButton.closest(".form-actions");
+    (actionArea || submitButton).before(summary);
+    return summary;
+  };
+
+  const refresh = (form) => {
+    const summary = getSummary(form);
+    if (!summary) {
+      return;
+    }
+
+    const messages = Array.from(
+      form.querySelectorAll(
+        ".field-error, .form-message.is-error, [data-validation-error]",
+      ),
+    )
+      .filter((element) => !element.classList.contains("action-error-summary"))
+      .map((element) => element.textContent.trim())
+      .filter(Boolean);
+
+    const uniqueMessages = [...new Set(messages)];
+    const nextText = uniqueMessages.length
+      ? `入力内容を確認してください。\n${uniqueMessages
+          .map((message) => `・${message}`)
+          .join("\n")}`
+      : "";
+
+    if (summary.textContent !== nextText) {
+      summary.textContent = nextText;
+    }
+
+    const shouldHide = uniqueMessages.length === 0;
+    if (summary.hidden !== shouldHide) {
+      summary.hidden = shouldHide;
+    }
+  };
+
+  forms.forEach((form) => {
+    getSummary(form);
+    refresh(form);
+
+    form.addEventListener("input", () => {
+      window.setTimeout(() => refresh(form), 0);
+    });
+    form.addEventListener("change", () => {
+      window.setTimeout(() => refresh(form), 0);
+    });
+    form.addEventListener(
+      "submit",
+      () => {
+        window.setTimeout(() => refresh(form), 0);
+      },
+      true,
+    );
+
+    const observer = new MutationObserver(() => refresh(form));
+    observer.observe(form, {
+      subtree: true,
+      childList: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ["class", "hidden"],
+    });
+  });
+}
+
 const RULE_PRESETS = {
   yonma: {
     "10-30": {
@@ -5566,5 +5658,6 @@ connectionTestButton.addEventListener(
 );
 
 refreshPlayerNameFieldReferences();
+setupActionErrorSummaries();
 
 initializeApp();

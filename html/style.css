@@ -3984,3 +3984,24 @@ select:focus {
   margin: 10px 0 0;
   text-align: center;
 }
+
+
+/* 保存・完了操作の直前に表示する入力エラー要約 */
+.action-error-summary {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+
+  color: var(--color-error);
+  white-space: pre-line;
+
+  background: var(--color-error-background);
+  border: 1px solid color-mix(in srgb, var(--color-error) 28%, transparent);
+  border-radius: var(--radius-small);
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.action-error-summary[hidden] {
+  display: none;
+}
