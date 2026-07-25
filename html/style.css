@@ -4272,3 +4272,191 @@ select:focus {
     min-width: 31px;
   }
 }
+
+/* STEP16-2：ポイント増減画面の情報密度を改善 */
+#adjustment-create-screen .page-content {
+  padding-top: 14px;
+  padding-bottom: 18px;
+}
+
+#adjustment-create-screen .event-form {
+  gap: 14px;
+}
+
+#adjustment-create-screen .form-section {
+  padding: 18px;
+  border-radius: var(--radius-card, 20px);
+}
+
+#adjustment-create-screen .section-heading {
+  margin-bottom: 14px;
+}
+
+#adjustment-create-screen .section-heading h2 {
+  margin-bottom: 3px;
+}
+
+#adjustment-create-screen .section-heading p {
+  line-height: 1.5;
+}
+
+#adjustment-create-screen .form-group {
+  gap: 7px;
+}
+
+#adjustment-create-screen #adjustment-title {
+  min-height: 44px;
+}
+
+#adjustment-create-screen .adjustment-entry-list {
+  gap: 7px;
+}
+
+#adjustment-create-screen .adjustment-entry-row {
+  min-height: 52px;
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+#adjustment-create-screen .adjustment-entry-player {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+#adjustment-create-screen .adjustment-total-panel {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 5px 12px;
+  margin-top: 10px;
+  padding: 11px 12px;
+  border-radius: 10px;
+}
+
+#adjustment-create-screen .adjustment-total-panel > span,
+#adjustment-create-screen .adjustment-total-panel > strong {
+  line-height: 1.3;
+}
+
+#adjustment-create-screen .adjustment-total-message {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 7px 10px;
+  line-height: 1.35;
+}
+
+#adjustment-create-screen .match-form-actions {
+  margin-top: 0;
+}
+
+@media (max-width: 520px) {
+  #adjustment-create-screen .page-content {
+    padding-top: 12px;
+  }
+
+  #adjustment-create-screen .event-form {
+    gap: 12px;
+  }
+
+  #adjustment-create-screen .form-section {
+    padding: 16px;
+  }
+
+  #adjustment-create-screen .section-heading {
+    margin-bottom: 12px;
+  }
+
+  #adjustment-create-screen .adjustment-entry-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 50px;
+    gap: 8px;
+    padding: 7px 9px;
+  }
+
+  #adjustment-create-screen .adjustment-entry-player {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #adjustment-create-screen .adjustment-total-panel {
+    margin-top: 9px;
+  }
+}
+
+/* STEP16-3：対局一覧の一覧性と情報密度を改善 */
+#event-list-screen .page-content {
+  padding-top: 14px;
+  padding-bottom: 18px;
+}
+
+#event-list-screen .event-list {
+  margin-top: 14px;
+  gap: 10px;
+}
+
+#event-list-screen .event-card {
+  min-height: 0;
+  padding: 14px 15px;
+  grid-template-columns: minmax(0, 1fr) 14px;
+  gap: 10px;
+  border-radius: 14px;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+#event-list-screen .event-card:hover {
+  border-color: #cbd8d0;
+  box-shadow: var(--shadow-card-hover);
+}
+
+#event-list-screen .event-card:active {
+  transform: translateY(1px);
+}
+
+#event-list-screen .event-status {
+  margin-bottom: 6px;
+  padding: 3px 8px;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+#event-list-screen .event-title {
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+#event-list-screen .event-meta {
+  margin-top: 6px;
+  gap: 3px 12px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+#event-list-screen .event-card-arrow {
+  font-size: 22px;
+  line-height: 1;
+}
+
+#event-list-screen .empty-state {
+  margin-top: 14px;
+  padding: 34px 20px;
+}
+
+@media (max-width: 520px) {
+  #event-list-screen .page-content {
+    padding-top: 12px;
+  }
+
+  #event-list-screen .event-list {
+    margin-top: 12px;
+    gap: 9px;
+  }
+
+  #event-list-screen .event-card {
+    padding: 13px 14px;
+  }
+}
