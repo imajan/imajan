@@ -197,6 +197,9 @@ const adjustmentEmptyState = document.getElementById(
 const playerAddBackButton = document.getElementById(
   "player-add-back-button",
 );
+const playerFinishButton = document.getElementById(
+  "player-finish-button",
+);
 const playerAddForm = document.getElementById("player-add-form");
 const registeredPlayerSection = document.getElementById(
   "registered-player-section",
@@ -5658,6 +5661,11 @@ adjustmentDeleteButton.addEventListener(
 );
 
 playerAddBackButton.addEventListener("click", () => {
+  flushFrequentPlayerBatch();
+  showEventDetailScreen(currentEvent, { scrollToTop: true });
+});
+
+playerFinishButton.addEventListener("click", () => {
   flushFrequentPlayerBatch();
   showEventDetailScreen(currentEvent, { scrollToTop: true });
 });
