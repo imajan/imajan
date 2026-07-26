@@ -4694,3 +4694,90 @@ select:focus {
     padding-left: 14px;
   }
 }
+
+/* STEP16-6：半荘登録画面の最終UI調整 */
+#match-create-screen .page-content {
+  padding-top: 12px;
+  padding-bottom: 64px;
+}
+
+#match-create-screen .event-form {
+  gap: 12px;
+}
+
+#match-create-screen .form-section {
+  padding: 15px 16px;
+  border-radius: 16px;
+}
+
+#match-create-screen .section-heading {
+  margin-bottom: 10px;
+}
+
+#match-create-screen .section-heading h2 {
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+#match-create-screen .section-heading p {
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+#match-create-screen .match-entry-list {
+  gap: 0;
+}
+
+#match-create-screen .match-entry-row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+#match-create-screen .point-total-panel {
+  margin-top: 9px;
+}
+
+#match-create-screen #match-entry-error:empty,
+#match-create-screen #tie-break-error:empty {
+  display: none;
+}
+
+#match-create-screen #match-entry-error:not(:empty),
+#match-create-screen #tie-break-error:not(:empty) {
+  min-height: 0;
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  background: var(--color-error-background);
+  border: 1px solid color-mix(in srgb, var(--color-error) 24%, transparent);
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+#match-create-screen #match-create-message {
+  margin-bottom: 0;
+}
+
+#match-create-screen .match-form-actions {
+  gap: 8px;
+  margin-top: 0;
+}
+
+#match-create-screen .match-form-actions .primary-button,
+#match-create-screen .match-form-actions .danger-button {
+  min-height: 48px;
+}
+
+@media (max-width: 420px) {
+  #match-create-screen .page-content {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  #match-create-screen .form-section {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+}
+
