@@ -12,18 +12,28 @@
 
     <title>IMAJAN｜麻雀成績管理</title>
 
-    <link rel="stylesheet" href="./style.css?v=20260720f" />
+    <link rel="icon" type="image/svg+xml" href="./assets/icon_i.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="./assets/icon-192.png" />
+
+    <link rel="stylesheet" href="./style.css?v=20260726h" />
   </head>
 
   <body>
     <main class="app">
       <section id="login-screen" class="login-screen">
         <div class="brand">
-          <div class="brand-mark" aria-hidden="true">I</div>
+          <h1 class="brand-logo">
+            <img
+              src="./assets/logo_horizontal.svg"
+              alt="IMAJAN"
+              width="360"
+              height="64"
+            />
+          </h1>
 
-          <h1 class="brand-name">IMAJAN</h1>
-
-          <p class="brand-description">仲間内の麻雀リーグを、もっと簡単に。</p>
+          <p class="brand-description">もうスコアシートはいりません。</p>
         </div>
 
         <div class="login-card">
@@ -101,19 +111,22 @@
         </div>
 
         <p class="login-note">
-          身内で使うための、シンプルな麻雀成績管理ツールです。
+          集計も精算も、IMAJANにおまかせ。
         </p>
       </section>
 
       <section id="home-screen" class="home-screen" hidden>
         <header class="app-header">
           <div class="home-brand">
-            <div class="home-brand-mark" aria-hidden="true">I</div>
-
-            <div>
-              <p class="home-brand-name">IMAJAN</p>
-              <p class="home-brand-caption">麻雀成績管理</p>
+            <div class="home-brand-logo">
+              <img
+                src="./assets/logo_horizontal.svg"
+                alt="IMAJAN"
+                width="360"
+                height="64"
+              />
             </div>
+            <p class="home-brand-caption">麻雀成績管理</p>
           </div>
 
           <button id="logout-button" class="text-button" type="button">
