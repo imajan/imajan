@@ -133,6 +133,18 @@ const eventSummaryGame = document.getElementById(
 const eventSummaryUma = document.getElementById(
   "event-summary-uma",
 );
+const eventStatusHeading = document.getElementById(
+  "event-status-heading",
+);
+const eventStatusDescription = document.getElementById(
+  "event-status-description",
+);
+const eventStatusButton = document.getElementById(
+  "event-status-button",
+);
+const eventStatusMessage = document.getElementById(
+  "event-status-message",
+);
 const playerCountText = document.getElementById(
   "player-count-text",
 );
@@ -2353,8 +2365,22 @@ function renderEventDetailContent_() {
     currentEvent.gameType === "sanma" ? "三麻" : "四麻";
 
   eventDetailTitle.textContent = getEventDisplayName(currentEvent);
+  const isCompletedEvent = currentEvent.status === "completed";
   eventDetailCaption.textContent =
-    currentEvent.status === "completed" ? "終了" : "開催中";
+    isCompletedEvent ? "終了" : "開催中";
+
+  eventStatusHeading.textContent = isCompletedEvent
+    ? "対局を再開する"
+    : "対局を終了する";
+  eventStatusDescription.textContent = isCompletedEvent
+    ? "再開すると「開催中」一覧へ移動します。成績や履歴はそのまま保持されます。"
+    : "終了すると「終了」一覧へ移動します。終了後も成績の閲覧・編集は可能です。";
+  eventStatusButton.textContent = isCompletedEvent
+    ? "対局を再開する"
+    : "対局を終了する";
+  eventStatusButton.classList.toggle("is-reopen", isCompletedEvent);
+  eventStatusMessage.textContent = "";
+  eventStatusMessage.className = "form-message event-status-message";
 
   eventSummaryName.textContent = getEventDisplayName(currentEvent);
   eventSummaryType.textContent = eventTypeText;
@@ -5355,6 +5381,64 @@ async function handleEventCreateSubmit(event) {
   }
 }
 
+async function handleEventStatusChange() {
+  if (!currentUser || !currentEvent || eventStatusButton.disabled) {
+    return;
+  }
+
+  const isCompleted = currentEvent.status === "completed";
+  const nextStatus = isCompleted ? "active" : "completed";
+  const confirmed = window.confirm(
+    isCompleted
+      ? "この対局を再開しますか？\n\n再開すると「開催中」一覧へ移動します。"
+      : "この対局を終了しますか？\n\n終了すると「終了」一覧へ移動します。\n終了後も成績の閲覧・編集は可能です。",
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  eventStatusButton.disabled = true;
+  eventStatusButton.textContent = isCompleted
+    ? "再開中..."
+    : "終了中...";
+  eventStatusMessage.textContent = "";
+  eventStatusMessage.className = "form-message event-status-message";
+
+  try {
+    const updatedEvent = normalizeCloudEvent(
+      await callGasApi("updateEventStatus", {
+        ownerUserId: currentUser.userId,
+        eventId: currentEvent.eventId,
+        status: nextStatus,
+      }),
+    );
+
+    cloudEvents = cloudEvents.map((event) =>
+      event.eventId === updatedEvent.eventId ? updatedEvent : event,
+    );
+    currentEvent = updatedEvent;
+    currentEventStatus = nextStatus;
+
+    renderEventDetail();
+    eventStatusMessage.textContent =
+      nextStatus === "completed"
+        ? "対局を「終了」一覧へ移動しました。"
+        : "対局を「開催中」一覧へ戻しました。";
+    eventStatusMessage.className =
+      "form-message event-status-message is-success";
+  } catch (error) {
+    console.error(error);
+    renderEventDetail();
+    eventStatusMessage.textContent =
+      error.message || "対局状態を変更できませんでした。";
+    eventStatusMessage.className =
+      "form-message event-status-message is-error";
+  } finally {
+    eventStatusButton.disabled = false;
+  }
+}
+
 /**
  * ログイン処理です。
  */
@@ -5644,6 +5728,11 @@ umaSignButtons.forEach((button) => {
 eventDetailBackButton.addEventListener("click", () => {
   showEventListScreen();
 });
+
+eventStatusButton.addEventListener(
+  "click",
+  handleEventStatusChange,
+);
 
 openPlayerAddButton.addEventListener(
   "click",

@@ -340,6 +340,9 @@ function routeApiRequest_(action, payload) {
     case "listEvents":
       return apiListEvents_(payload);
 
+    case "updateEventStatus":
+      return apiUpdateEventStatus_(payload);
+
     case "createPlayer":
       return apiCreatePlayer_(payload);
 
@@ -703,6 +706,93 @@ function apiListEvents_(payload) {
     "eventList"
   );
   return events;
+}
+
+function apiUpdateEventStatus_(payload) {
+  const ownerUserId = String(
+    payload && payload.ownerUserId ? payload.ownerUserId : ""
+  ).trim();
+  const eventId = String(
+    payload && payload.eventId ? payload.eventId : ""
+  ).trim();
+  const status = String(
+    payload && payload.status ? payload.status : ""
+  ).trim();
+
+  if (!ownerUserId) {
+    const ownerError = new Error("ユーザーIDが指定されていません。");
+    ownerError.code = "INVALID_OWNER_USER_ID";
+    throw ownerError;
+  }
+
+  if (!eventId) {
+    const eventError = new Error("イベントIDが指定されていません。");
+    eventError.code = "INVALID_EVENT_ID";
+    throw eventError;
+  }
+
+  if (["active", "completed"].indexOf(status) === -1) {
+    const statusError = new Error("イベント状態が正しくありません。");
+    statusError.code = "INVALID_EVENT_STATUS";
+    throw statusError;
+  }
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+
+  try {
+    const sheet = getSheetByNameOrThrow_(APP_CONFIG.SHEETS.EVENTS);
+    const events = getSheetRecordsWithPerf_(sheet);
+    const event = events.find(function (item) {
+      return String(item.eventId) === eventId;
+    });
+
+    if (!event) {
+      const notFoundError = new Error("指定されたイベントが見つかりません。");
+      notFoundError.code = "EVENT_NOT_FOUND";
+      throw notFoundError;
+    }
+
+    if (String(event.ownerUserId) !== ownerUserId) {
+      const ownershipError = new Error(
+        "指定されたイベントを操作する権限がありません。"
+      );
+      ownershipError.code = "EVENT_ACCESS_DENIED";
+      throw ownershipError;
+    }
+
+    const headers = sheet
+      .getRange(1, 1, 1, sheet.getLastColumn())
+      .getDisplayValues()[0]
+      .map(normalizeHeader_);
+    const statusColumn = headers.indexOf("status") + 1;
+    const updatedAtColumn = headers.indexOf("updatedAt") + 1;
+
+    if (statusColumn < 1 || updatedAtColumn < 1) {
+      const setupError = new Error(
+        "EventsシートにstatusまたはupdatedAt列がありません。"
+      );
+      setupError.code = "SETUP_REQUIRED";
+      throw setupError;
+    }
+
+    const now = getNowIso_();
+    sheet.getRange(event._rowNumber, statusColumn).setValue(status);
+    sheet.getRange(event._rowNumber, updatedAtColumn).setValue(now);
+
+    invalidateSheetCache_(APP_CONFIG.SHEETS.EVENTS);
+    invalidateOwnerCaches_(ownerUserId, {
+      eventList: true,
+      eventDetail: true,
+    });
+
+    event.status = status;
+    event.updatedAt = now;
+
+    return serializeEventRecord_(event, getMatchCountMap_());
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function validateEventPayload_(payload) {

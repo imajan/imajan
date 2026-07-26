@@ -4938,3 +4938,43 @@ select:focus {
       40px 40px 40px;
   }
 }
+
+
+/* STEP17-3：対局の終了・再開 */
+.event-status-section {
+  display: grid;
+  gap: 16px;
+}
+
+.event-status-copy h2 {
+  margin: 0 0 5px;
+  color: var(--color-text);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.event-status-copy p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.event-status-button.is-reopen {
+  color: var(--color-primary-dark);
+  background: #f1f8f3;
+  border-color: #b9d1c1;
+}
+
+.event-status-button.is-reopen:hover {
+  background: #e8f4eb;
+}
+
+.event-status-message {
+  min-height: 0;
+  margin: -4px 0 0;
+}
+
+.event-status-message:empty {
+  display: none;
+}
