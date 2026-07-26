@@ -4781,3 +4781,160 @@ select:focus {
   }
 }
 
+
+
+/* STEP17-2：順位表の精算機能 */
+.settlement-form {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: #f8faf9;
+}
+
+.settlement-rate-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.settlement-control-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.settlement-rate-prefix,
+.settlement-rate-unit {
+  flex: 0 0 auto;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.settlement-rate-input {
+  width: 82px;
+  min-width: 0;
+  height: 38px;
+  padding: 7px 9px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.settlement-rate-input:focus {
+  border-color: var(--color-primary);
+  outline: 2px solid rgba(22, 101, 52, 0.14);
+}
+
+.settlement-apply-button,
+.settlement-clear-button {
+  min-height: 38px;
+  padding: 7px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.settlement-apply-button {
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.settlement-clear-button {
+  border: 1px solid var(--color-border);
+  background: #fff;
+  color: var(--color-text-secondary);
+}
+
+.settlement-clear-button:disabled {
+  opacity: 0.45;
+}
+
+.settlement-error {
+  margin: 7px 0 0;
+  color: #c43d32;
+  font-size: 11px;
+}
+
+.standings-table.has-settlement {
+  min-width: 710px;
+}
+
+.standings-table.is-sanma.has-settlement {
+  min-width: 680px;
+}
+
+.standings-table.has-settlement .standings-row {
+  grid-template-columns:
+    112px 78px 88px 68px 54px
+    42px 42px 42px 42px;
+}
+
+.standings-table.is-sanma.has-settlement .standings-row {
+  grid-template-columns:
+    112px 78px 88px 68px 54px
+    42px 42px 42px;
+}
+
+.standings-settlement {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.standings-settlement.is-positive {
+  color: var(--color-primary-dark);
+}
+
+.standings-settlement.is-negative {
+  color: #b5473d;
+}
+
+.standings-settlement.is-zero {
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 420px) {
+  .settlement-control-row {
+    gap: 6px;
+  }
+
+  .settlement-rate-input {
+    width: 70px;
+  }
+
+  .settlement-apply-button,
+  .settlement-clear-button {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .standings-table.has-settlement {
+    min-width: 700px;
+  }
+
+  .standings-table.is-sanma.has-settlement {
+    min-width: 650px;
+  }
+
+  .standings-table.has-settlement .standings-row {
+    grid-template-columns:
+      110px 76px 86px 66px 52px
+      40px 40px 40px 40px;
+  }
+
+  .standings-table.is-sanma.has-settlement .standings-row {
+    grid-template-columns:
+      110px 76px 86px 66px 52px
+      40px 40px 40px;
+  }
+}

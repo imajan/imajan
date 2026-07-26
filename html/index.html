@@ -669,6 +669,38 @@
 
             <div id="player-ranking-list" class="player-ranking-list"></div>
 
+            <form id="settlement-form" class="settlement-form" novalidate>
+              <label class="settlement-rate-label" for="settlement-rate-input">
+                精算レート
+              </label>
+              <div class="settlement-control-row">
+                <span class="settlement-rate-prefix">1Pt =</span>
+                <input
+                  id="settlement-rate-input"
+                  class="settlement-rate-input"
+                  type="number"
+                  min="0"
+                  step="any"
+                  inputmode="decimal"
+                  placeholder="100"
+                  aria-describedby="settlement-error"
+                >
+                <span class="settlement-rate-unit">G</span>
+                <button class="settlement-apply-button" type="submit">
+                  精算
+                </button>
+                <button
+                  id="settlement-clear-button"
+                  class="settlement-clear-button"
+                  type="button"
+                  disabled
+                >
+                  解除
+                </button>
+              </div>
+              <p id="settlement-error" class="settlement-error" hidden></p>
+            </form>
+
             <section id="player-empty-state" class="mini-empty-state">
               <p>まだプレイヤーが登録されていません。</p>
             </section>
@@ -756,7 +788,7 @@
               hidden
             >
               <div class="section-heading">
-                <h2>登録済みプレイヤー</h2>
+                <h2 id="registered-player-heading">登録済みプレイヤー</h2>
                 <p>現在この対局に参加しているプレイヤーです。</p>
               </div>
 

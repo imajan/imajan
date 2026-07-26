@@ -166,6 +166,18 @@ const rangeEmptyState = document.getElementById(
 const standingsScopeCaption = document.getElementById(
   "standings-scope-caption",
 );
+const settlementForm = document.getElementById(
+  "settlement-form",
+);
+const settlementRateInput = document.getElementById(
+  "settlement-rate-input",
+);
+const settlementClearButton = document.getElementById(
+  "settlement-clear-button",
+);
+const settlementError = document.getElementById(
+  "settlement-error",
+);
 const matchCountText = document.getElementById(
   "match-count-text",
 );
@@ -364,6 +376,7 @@ let loadedAdjustmentOwnerUserId = null;
 let currentEditingMatch = null;
 let tieBreakOrderByPoints = new Map();
 let standingsMode = "all";
+let settlementRate = null;
 let selectedRangeRecordKeys = new Set();
 let rangeSelectionInitializedEventId = null;
 let currentEditingAdjustment = null;
@@ -1989,6 +2002,11 @@ async function showEventDetailScreen(
 
   if (isDifferentEvent) {
     standingsMode = "all";
+    settlementRate = null;
+    settlementRateInput.value = "";
+    settlementClearButton.disabled = true;
+    settlementError.hidden = true;
+    settlementError.textContent = "";
     selectedRangeRecordKeys = new Set();
     rangeSelectionInitializedEventId = null;
   }
@@ -2344,12 +2362,10 @@ function renderEventDetailContent_() {
   const rulePreset = String(
     currentEvent.rulePreset || currentEvent.umaPreset || "",
   );
-  eventSummaryUma.textContent =
-    currentEvent.ruleMode === "manual"
-      ? "手動設定"
-      : rulePreset === "none"
-        ? "ウマ・オカなし"
-        : rulePreset || "設定なし";
+  // イベント詳細トップでは、ウマ設定欄を表示しません。
+  // 旧データで日時文字列が表示される問題を避け、
+  // 「リーグ戦」「四麻／三麻」だけを簡潔に表示します。
+  eventSummaryUma.hidden = true;
 
   standingsAllButton.classList.toggle(
     "is-active",
@@ -2558,6 +2574,48 @@ function getStandingsScoreClass(score) {
   return "is-zero";
 }
 
+function formatSettlementValue(score) {
+  const settlementValue = Math.round(
+    (Number(score) || 0) * settlementRate,
+  );
+  const sign = settlementValue > 0 ? "+" : "";
+
+  return `${sign}${settlementValue.toLocaleString("ja-JP")}G`;
+}
+
+function handleSettlementSubmit(event) {
+  event.preventDefault();
+
+  const rate = Number(settlementRateInput.value);
+
+  if (
+    settlementRateInput.value.trim() === "" ||
+    !Number.isFinite(rate) ||
+    rate <= 0
+  ) {
+    settlementError.textContent =
+      "0より大きい精算レートを入力してください。";
+    settlementError.hidden = false;
+    settlementRateInput.focus();
+    return;
+  }
+
+  settlementRate = rate;
+  settlementError.hidden = true;
+  settlementError.textContent = "";
+  settlementClearButton.disabled = false;
+  renderEventDetailContent_();
+}
+
+function clearSettlement() {
+  settlementRate = null;
+  settlementRateInput.value = "";
+  settlementClearButton.disabled = true;
+  settlementError.hidden = true;
+  settlementError.textContent = "";
+  renderEventDetailContent_();
+}
+
 function renderPlayerStandings(players) {
   playerRankingList.replaceChildren();
 
@@ -2574,11 +2632,16 @@ function renderPlayerStandings(players) {
     ? "standings-table is-sanma"
     : "standings-table";
 
+  if (settlementRate !== null) {
+    table.classList.add("has-settlement");
+  }
+
   const header = document.createElement("div");
   header.className = "standings-row standings-header";
   header.innerHTML = `
     <span class="standings-player-column">プレイヤー</span>
     <span>総合Pt</span>
+    ${settlementRate !== null ? "<span>精算</span>" : ""}
     <span>平均順位</span>
     <span>半荘数</span>
     <span>1位</span>
@@ -2602,6 +2665,13 @@ function renderPlayerStandings(players) {
       <strong class="standings-score ${getStandingsScoreClass(
         score,
       )}">${formatSignedScore(score)}</strong>
+      ${
+        settlementRate !== null
+          ? `<strong class="standings-settlement ${getStandingsScoreClass(
+              score,
+            )}">${formatSettlementValue(score)}</strong>`
+          : ""
+      }
       <span class="standings-average">${formatAverageRank(
         player,
       )}</span>
@@ -5612,6 +5682,21 @@ standingsAllButton.addEventListener("click", () => {
 
 standingsRangeButton.addEventListener("click", () => {
   setStandingsMode("range");
+});
+
+settlementForm.addEventListener(
+  "submit",
+  handleSettlementSubmit,
+);
+
+settlementClearButton.addEventListener(
+  "click",
+  clearSettlement,
+);
+
+settlementRateInput.addEventListener("input", () => {
+  settlementError.hidden = true;
+  settlementError.textContent = "";
 });
 
 rangeSelectAllButton.addEventListener(
