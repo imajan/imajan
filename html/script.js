@@ -2891,7 +2891,7 @@ function readAdjustmentEntries() {
     const valueText = input.value.trim();
 
     const absolutePoints =
-      valueText === "" ? null : Math.abs(Number(valueText));
+      valueText === "" ? 0 : Math.abs(Number(valueText));
     const isNegative = row.dataset.negative === "true";
 
     return {
